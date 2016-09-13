@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<project name="AutoAppium_testng" default="run" basedir=".">
+    <echo message="import libs" />
+    <echo>Java-Home: ${java.home}</echo>
+    <echo>Java-Version: ${java.version}</echo> 
+    <!-- 测试案例源码路径 -->
+    <property name="src.dir" value="src"/>
+    <!-- 编译成class的存储路径 -->
+    <property name="class.dir" value="bin"/>
+    <!-- lib路径存放第三方jar包 -->
+    <property name="libs.dir" value="libs"/>
+    <!-- screenShot路径存放截图 -->
+    <property name="screenShot.dir" value="screenShot"/>
+    <!-- 生成报告的路径 -->
+    <property name="xml.dir" value="xml"/>
+    
+    <!-- <property name="report.dir" value="report"/>   
+    <property name="src.dir" value="src\test" />
+    <property name="dest.dir" value="build" />
+    <property name="dest.report" value="report" /> -->
+    <path id="run.classpath">
+        <fileset dir="${basedir}">
+            <include name="libs/*.jar" />
+        </fileset>
+    </path>
+    <taskdef name="testng" classname="com.beust.testng.TestNGAntTask"> 
+        <classpath>
+          <pathelement location="libs/testng.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="clean">
+        <delete dir="${dest.dir}" />
+    </target>
+    <target name="compile" depends="clean">
+        <echo message="mkdir" />
+        <mkdir dir="${dest.dir}" />
+        <javac  srcdir="${src.dir}" destdir="${dest.dir}" encoding="UTF-8" debug="on" includeAntRuntime="false" >
+            <classpath refid="run.classpath" />
+        </javac>
+    </target>
+    <path id="runpath">
+        <path refid="run.classpath" />
+        <pathelement location="${dest.dir}" />
+    </path>
+    
+    <target name="run" depends="compile">
+        
+        <testng classpathref="runpath" outputDir="report" haltOnFailure="true" useDefaultListeners="false" 
+            listeners="org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter,org.testng.reporters.FailedReporter"> 
+        <!--<testng classpathref="runpath" outputDir="${dest.report}" haltOnFailure="true" useDefaultListeners="true" >-->
+            <xmlfileset dir="${basedir}" includes="OptDownLoadJsonP2.xml" />
+            <jvmarg value="-ea" />
+            <sysproperty key="org.uncommons.reportng.title" value="自动化测试报告" />
+            <sysproperty key="org.uncommons.reportng.escape-output" value="false" />
+            
+             
+        </testng>
+    </target>
+   
+  
+   
+</project>
